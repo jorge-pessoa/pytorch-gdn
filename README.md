@@ -26,7 +26,7 @@ The implementation is based on the available Tensorflow implementation un the co
 
 ## Usage
 
-The GDN layer can be used as a normal non-linearity in PyTorch but must be instantiated with the number of channels at the application and the torch device where it will be used:
+The GDN layer can be used as a normal non-linearity in PyTorch but must be instantiated with the number of channels at the application and the torch device where it will be used. The GDN layer supports 4-d inputs (batch of images) or 5-d inputs (batch of videos). The 5-d input is handled by unfolding the sequence dimension.
 
 ```
 device = torch.device('cuda')
@@ -38,11 +38,14 @@ input = torch.randn(1, 8, 32, 32).to(device)
 output = gdn(input)
 ```
 
+In an example application, the normal GDN should be used with convolutions in an Encoder, and the inverse GDN should be used in the decoder with transposed convolutions.
+
 Other parameters that can be used with the GDN are:
 
 
 ```
 gdn = GDN(8, device
+          inverse = True,
           beta_min=1-e6,
           gamma_init=.1,
           reparam_offset=2**-18
