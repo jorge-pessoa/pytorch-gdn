@@ -19,11 +19,23 @@ https://arxiv.org/abs/1511.06281
 
 Johannes Ballé, Valero Laparra, Eero P. Simoncelli
 
-## Method
+## Usage
 
-The GDN activation implements the function:
+The GDN layer can be used as a normal non-linearity in PyTorch but must be instantiated with the number of channels at the application and the torch device where it will be used:
 
-`y[i] = x[i] / sqrt(beta[i] + sum_j(gamma[j, i] * x[j]))`
+```
+device = torch.device('cuda')
+gdn = GDN(8, device)
+```
+
+Other parameters that can be used with the GDN are:
 
 
+```
+gdn = GDN(8, device
+          beta_min=1-e6,
+          gamma_init=.1,
+          reparam_offset=2**-18
+)
+```
 
