@@ -25,7 +25,12 @@ The GDN layer can be used as a normal non-linearity in PyTorch but must be insta
 
 ```
 device = torch.device('cuda')
-gdn = GDN(8, device)
+n_ch = 8
+
+gdn = GDN(n_ch, device)
+
+input = torch.randn(1, 8, 32, 32).to(device)
+output = gdn(input)
 ```
 
 Other parameters that can be used with the GDN are:
