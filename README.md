@@ -19,6 +19,9 @@ https://arxiv.org/abs/1511.06281
 
 Johannes Ballé, Valero Laparra, Eero P. Simoncelli
 
+
+https://arxiv.org/abs/1611.01704
+
 ## Usage
 
 The GDN layer can be used as a normal non-linearity in PyTorch but must be instantiated with the number of channels at the application and the torch device where it will be used:
