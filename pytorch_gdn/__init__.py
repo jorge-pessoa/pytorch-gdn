@@ -8,12 +8,14 @@ from torch.autograd import Function
 
 
 class LowerBound(Function):
+    @staticmethod
     def forward(ctx, inputs, bound):
         b = torch.ones(inputs.size())*bound
         b = b.to(inputs.device)
         ctx.save_for_backward(inputs, b)
         return torch.max(inputs, b)
   
+    @staticmethod
     def backward(ctx, grad_output):
         inputs, b = ctx.saved_tensors
 
@@ -72,11 +74,11 @@ class GDN(nn.Module):
         _, ch, _, _ = inputs.size()
 
         # Beta bound and reparam
-        beta = LowerBound()(self.beta, self.beta_bound)
+        beta = LowerBound.apply(self.beta, self.beta_bound)
         beta = beta**2 - self.pedestal 
 
         # Gamma bound and reparam
-        gamma = LowerBound()(self.gamma, self.gamma_bound)
+        gamma = LowerBound.apply(self.gamma, self.gamma_bound)
         gamma = gamma**2 - self.pedestal
         gamma  = gamma.view(ch, ch, 1, 1)
 
