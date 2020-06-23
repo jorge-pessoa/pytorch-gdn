@@ -65,6 +65,11 @@ class GDN(nn.Module):
         self.pedestal = self.pedestal.to(device)
 
     def forward(self, inputs):
+        # Assert internal parameters to same device as input
+        self.beta = self.beta.to(inputs.device)
+        self.gamma = self.gamma.to(inputs.device)
+        self.pedestal = self.pedestal.to(inputs.device)
+
         unfold = False
         if inputs.dim() == 5:
             unfold = True
