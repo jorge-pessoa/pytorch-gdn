@@ -28,7 +28,7 @@ class LowerBound(Function):
 
 class GDN(nn.Module):
     """Generalized divisive normalization layer.
-    y[i] = x[i] / sqrt(beta[i] + sum_j(gamma[j, i] * x[j]))
+    y[i] = x[i] / sqrt(beta[i] + sum_j(gamma[j, i] * x[j]^2))
     """
   
     def __init__(self,
