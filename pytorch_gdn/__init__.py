@@ -10,7 +10,7 @@ from torch.autograd import Function
 class LowerBound(Function):
     @staticmethod
     def forward(ctx, inputs, bound):
-        b = torch.ones(inputs.size())*bound
+        b = torch.ones(inputs.size(), device=inputs.device)*bound
         b = b.to(inputs.device)
         ctx.save_for_backward(inputs, b)
         return torch.max(inputs, b)
@@ -42,7 +42,7 @@ class GDN(nn.Module):
         self.inverse = inverse
         self.beta_min = beta_min
         self.gamma_init = gamma_init
-        self.reparam_offset = torch.FloatTensor([reparam_offset])
+        self.reparam_offset = torch.tensor([reparam_offset], device=device)
 
         self.build(ch, torch.device(device))
   
@@ -50,26 +50,19 @@ class GDN(nn.Module):
         self.pedestal = self.reparam_offset**2
         self.beta_bound = (self.beta_min + self.reparam_offset**2)**.5
         self.gamma_bound = self.reparam_offset
-  
+
         # Create beta param
-        beta = torch.sqrt(torch.ones(ch)+self.pedestal)
-        self.beta = nn.Parameter(beta.to(device))
+        beta = torch.sqrt(torch.ones(ch, device=device)+self.pedestal)
+        self.beta = nn.Parameter(beta)
 
         # Create gamma param
-        eye = torch.eye(ch)
+        eye = torch.eye(ch, device=device)
         g = self.gamma_init*eye
         g = g + self.pedestal
         gamma = torch.sqrt(g)
-
-        self.gamma = nn.Parameter(gamma.to(device))
-        self.pedestal = self.pedestal.to(device)
+        self.gamma = nn.Parameter(gamma)
 
     def forward(self, inputs):
-        # Assert internal parameters to same device as input
-        self.beta = self.beta.to(inputs.device)
-        self.gamma = self.gamma.to(inputs.device)
-        self.pedestal = self.pedestal.to(inputs.device)
-
         unfold = False
         if inputs.dim() == 5:
             unfold = True
